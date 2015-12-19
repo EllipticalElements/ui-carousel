@@ -1,7 +1,7 @@
 {
   "name": "ui-carousel",
   "description": "navigation web components",
-  "version":"1.0.1",
+  "version":"1.0.2",
   "main": "ui-carousel.html",
   "authors": [
     "S. Francis"

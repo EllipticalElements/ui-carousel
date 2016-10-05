@@ -1,0 +1,163 @@
+<link rel="import" href="../elliptical-polymer-behaviors/component-behavior.html">
+<link rel="import" href="../iron-icons/av-icons.html">
+<!--
+  css variables
+  --carousel-indicators-margin-right:10px
+  --carousel-indicators-color:#ddd
+  --carousel-indicators-active-color:#bbb
+  --carousel-indicators-height:18px
+  --carousel-indicators-width:18px
+  --carousel-indicators-transition:all .25s all
+
+-->
+<dom-module id="carousel-indicators">
+  <style>
+    :host {
+      display:-webkit-flex;
+      display: flex;
+      -webkit-justify-content: center;
+      justify-content:center
+    }
+
+    :host iron-icon{
+      margin-right:var(--carousel-indicators-margin-right, 10px);
+      color:var(--carousel-indicators-color,#ddd);
+      cursor:pointer;
+      --iron-icon-height: var(--carousel-indicators-height,18px);
+      --iron-icon-width: var(--carousel-indicators-width,18px);
+      transition:var(--carousel-indicators-transition,all .25s linear);
+    }
+    :host iron-icon.active{
+      color:var(--carousel-indicators-active-color,#bbb);
+    }
+    :host.hide {
+      display: none;
+    }
+    :host.full-width{
+      width:100%;
+    }
+  </style>
+  <template>
+    <template is="dom-repeat" items="[[items]]" as="item">
+      <iron-icon icon="av:fiber-manual-record" class$="[[item.active]]" index$="[[item.index]]" on-tap="_onTap"></iron-icon>
+    </template>
+  </template>
+</dom-module>
+<script>
+
+  Polymer({
+
+    is: 'carousel-indicators',
+
+    behaviors: [Elliptical.ComponentBehavior],
+
+    properties: {
+      items: {
+        type: Array,
+        notify: true,
+        value: function () {
+          return [];
+        }
+      },
+      length:{
+        type:Number,
+        value:0
+      },
+      activeIndex:{
+        type:Number,
+        value:0
+      },
+      carouselId:{
+        type:String,
+        value:null
+      },
+      _carousel:{
+        type:Object,
+        value:null
+      },
+      _eventTriggered:{
+        type:Boolean,
+        value:false
+      }
+    },
+
+    listeners: {},
+
+    ready: function () {
+      if(this.carouselId) {
+        this._dataBind();
+        this._setCarousel(this.carouselId);
+        this.classList.remove('hide');
+        this._events();
+      }
+      else{
+        console.warn('WARNING: carousel indicators requires a carousel id');
+        this.classList.add('hide');
+      }
+    },
+
+    _events:function(){
+      this._event($(document), 'ui-carousel-slide', this._onSlideChange.bind(this));
+    },
+
+    _setCarousel:function(id){
+      this._carousel=document.querySelector('#' + id);
+    },
+
+    _getModel:function(){
+      var activeIndex=this.activeIndex;
+      var items=[];
+      var length=this.length;
+      for(var i=0;i,i<length; i++){
+        var active=(i===activeIndex) ? 'active' : null;
+        var item={
+          active:active,
+          index:i
+        };
+        items.push(item);
+      }
+
+      return items;
+    },
+
+    _dataBind:function(){
+      this.items=this._getModel();
+    },
+
+    _updateItems:function(index){
+      var oldIndex=this.activeIndex;
+      this.activeIndex=index;
+      this.notifyPath('items.' + oldIndex +'.active',null);
+      this.notifyPath('items.' + index + '.active','active');
+    },
+
+    _slideCarousel:function(index){
+      var carousel=this._carousel;
+      this._eventTriggered=true;
+      if(carousel) carousel.slide(index);
+    },
+
+    _onTap:function(event){
+      var index=event.target.getAttribute('index');
+      index=parseInt(index);
+      this._slideCarousel(index);
+      this._updateItems(index);
+    },
+
+    _onSlideChange:function(event){
+      if(this._eventTriggered) this._eventTriggered=false;
+      else{
+        var detail=event.detail;
+        if(detail.id===this.carouselId){
+          var index=detail.slideIndex;
+          this._updateItems(index);
+        }
+      }
+    }
+
+
+
+
+  });
+
+</script>

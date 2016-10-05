@@ -3,6 +3,8 @@
 <link rel="import" href="../ui-behaviors/template-behavior.html">
 <link rel="import" href="carousel-elements.html">
 <link rel="import" href="../ui-behaviors/carousel.html">
+<link rel="import" href="carousel-indicators.html">
+
 
 <dom-module id="ui-carousel">
     <template>
@@ -111,6 +113,36 @@
             initOnVisibility:{
                 type:Boolean,
                 value:true
+            },
+
+            id:{
+                type:String,
+                value:null
+            },
+
+            suspended:{
+                type:Boolean,
+                value:false
+            },
+
+            _currentOffset:{
+              type:Number,
+              value:0
+            },
+
+            _runningOffset:{
+              type:Number,
+              value:0
+            },
+
+            _swipeExecuting:{
+              type:Boolean,
+              value:false
+            },
+
+            _itemsWidth:{
+              type:Number,
+              value:0
             }
 
         },

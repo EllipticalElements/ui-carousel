@@ -125,6 +125,11 @@
                 value:false
             },
 
+            minLength:{
+                type:String,
+                value:null
+            },
+
             _currentOffset:{
               type:Number,
               value:0
@@ -149,6 +154,9 @@
 
         ready:function(){
             this._assignLocalData();
+            if(this.minLength){
+               this.$.carouselItems.style.width=this.minLength + 'px';
+            }
             if(this.initOnload){
                 //run init only if carousel is visible
                 if(this._passVisibilityCheck()) this._initCarousel();
